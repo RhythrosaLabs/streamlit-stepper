@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Streamlit } from "streamlit-component-lib";
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const T = {
@@ -342,10 +343,32 @@ export default function Stepper() {
   const [touched, setTouched] = useState({});
   const contentRef = useRef(null);
 
-  const steps = DEMO_STEPS;
+  const [steps, setSteps] = useState(DEMO_STEPS);
   const step = steps[current];
   const isLast = current === steps.length - 1;
   const isValid = validateStep(step, values);
+
+  // ── Streamlit lifecycle ──────────────────────────────────────────────────
+  const readyRef = useRef(false);
+
+  useEffect(() => {
+    const onRender = (event) => {
+      const args = event.detail.args || {};
+      if (!readyRef.current) {
+        if (args.steps) {
+          setSteps(args.steps.map((s, i) => ({ id: s.id || `step_${i}`, ...s })));
+        }
+        if (args.orientation) setOrientation(args.orientation);
+        readyRef.current = true;
+      }
+      Streamlit.setFrameHeight();
+    };
+    Streamlit.events.addEventListener(Streamlit.RENDER_EVENT, onRender);
+    Streamlit.setComponentReady();
+    return () => Streamlit.events.removeEventListener(Streamlit.RENDER_EVENT, onRender);
+  }, []);
+
+  useEffect(() => { Streamlit.setFrameHeight(); });
 
   const getStatus = (i) => {
     if (i < current) return "done";
@@ -356,7 +379,11 @@ export default function Stepper() {
   const handleNext = () => {
     if (!isValid) { setShowErrors(true); return; }
     setShowErrors(false);
-    if (isLast) { setCompleted(true); return; }
+    if (isLast) {
+      setCompleted(true);
+      Streamlit.setComponentValue({ step: current, values, completed: true });
+      return;
+    }
     setCurrent((c) => c + 1);
     if (contentRef.current) contentRef.current.scrollTop = 0;
   };
