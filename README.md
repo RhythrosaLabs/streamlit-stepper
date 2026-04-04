@@ -2,7 +2,7 @@
 
 A multi-step wizard component for Streamlit. Define steps with typed fields, get built-in validation, animated progress connectors, a summary review step, and the final collected values back in Python.
 
-![Stepper screenshot](https://raw.githubusercontent.com/RhythrosaLabs/streamlit-stepper/main/docs/screenshot.png)
+![Stepper screenshot](https://raw.githubusercontent.com/RhythrosaLabs/streamlit-stepper/main/screenshot.png)
 
 ## Features
 
