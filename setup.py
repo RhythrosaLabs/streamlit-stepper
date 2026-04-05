@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="streamlit-stepper",
-    version="0.3.1",
+    version="0.3.2",
     author="Dan Sheils",
     author_email="",
     description="A multi-step wizard component for Streamlit with validation and progress tracking",
